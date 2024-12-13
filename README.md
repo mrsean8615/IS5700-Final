@@ -1,6 +1,6 @@
 Project Overview.
 
-All basic funcnality requirements are implemented within the project. 
+All basic functionality requirements are implemented within the project. 
 
 Some notes on what I could've done better:
 I started make api calls in unique files to check if things were working. This led to my foolish decision to not make a api hook for this. 
