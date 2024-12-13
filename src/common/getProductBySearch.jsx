@@ -1,16 +1,14 @@
 import axios from "axios";
-
-const getProductByType = async (type) => {
+const getProductBySearch = async (search) => {
   try {
-    //groupby type kept giving me an error so I had to use a different approach
     const response = await axios.get(
       `http://localhost:3000/products/published`
     );
 
     const products = response.data.products || [];
 
-    const data = products.filter(
-      (product) => product.product_type?.toLowerCase() === type.toLowerCase()
+    const data = products.filter((product) =>
+      product.title.toLowerCase().includes(search.toLowerCase())
     );
 
     return { products: data };
@@ -20,4 +18,4 @@ const getProductByType = async (type) => {
   }
 };
 
-export default getProductByType;
+export default getProductBySearch;
