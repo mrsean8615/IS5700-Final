@@ -39,8 +39,8 @@ export function DiscountProvider({ children }) {
 
       const result = await axios.put("http://localhost:3000/admin", {
         admin: {
-          username: currentAdmin.username, // Keep existing credentials
-          password: currentAdmin.password, // Keep existing credentials
+          username: currentAdmin.username,
+          password: currentAdmin.password,
           discount_threshold: newSettings.threshold,
           discount_rate: newSettings.rate,
         },

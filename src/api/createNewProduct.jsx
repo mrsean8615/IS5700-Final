@@ -2,7 +2,7 @@ import axios from "axios";
 
 const createNewProduct = async (productData) => {
   try {
-    console.log("Sending product data:", productData);
+    // console.log("Sending product data:", productData);
 
     const response = await axios.post("http://localhost:3000/products", {
       product: {
@@ -17,7 +17,7 @@ const createNewProduct = async (productData) => {
       },
     });
 
-    console.log("Server response:", response.data);
+    // console.log("Server response:", response.data);
 
     return {
       success: true,
