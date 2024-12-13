@@ -135,4 +135,48 @@ function mergeObjects(obj1, obj2) {
   };
 }
 
+/// Add a new product 
+// Added more functionality to the app
+// had a lot of help from ai to get this done
+app.post("/products", async (req, res) => {
+  try {
+    const newProduct = req.body.product;
+
+    if (!newProduct || !newProduct.title || !newProduct.description) {
+      return res.status(422).json({
+        message: "Invalid product data, required fields: [title, description]"
+      });
+    }
+
+    const fileContent = await fs.readFile("./data/products.json");
+    const products = JSON.parse(fileContent);
+
+    const maxId = Math.max(...products.map(p => p.id));
+    const newId = maxId + 1;
+
+    const productToAdd = {
+      id: newId,
+      title: newProduct.title,
+      price: parseFloat(newProduct.price) || 0,
+      description: newProduct.description,
+      product_type: newProduct.product_type || "uncategorized",
+      image: newProduct.image || "https://fakestoreapi.com/img/placeholder.jpg",
+      inventory: parseInt(newProduct.inventory) || 0,
+      published: newProduct.published || false
+    };
+
+    products.push(productToAdd);
+
+    await fs.writeFile("./data/products.json", JSON.stringify(products, null, 2));
+
+    res.status(201).json({ 
+      message: "Product created!",
+      product: productToAdd 
+    });
+  } catch (error) {
+    console.error("Error creating product:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 module.exports = app;

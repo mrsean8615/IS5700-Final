@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
-import getAllProducts from "../common/getAllProducts";
-import getProductByType from "../common/getProductByType";
-import getProductBySearch from "../common/getProductBySearch";
+import getAllPublishedProducts from "../api/getAllPublishedProducts";
+import getProductByType from "../api/getProductByType";
+import getProductBySearch from "../api/getProductBySearch";
+import { useAuth } from "../context/AuthProvider";
+import { useDiscount } from "../context/DiscountProvider";
+
 import {
   Container,
   Typography,
@@ -27,6 +30,11 @@ import {
   Box,
   Avatar,
 } from "@mui/material";
+import {
+  Add as AddIcon,
+  Remove as RemoveIcon,
+  ShoppingCart as ShoppingCartIcon,
+} from "@mui/icons-material";
 
 export default function ProductPage() {
   const [products, setProducts] = useState([]);
@@ -35,9 +43,11 @@ export default function ProductPage() {
   const [search, setSearch] = useState("");
   const [cartOpen, setCartOpen] = useState(false);
   const [cartItems, setCartItems] = useState([]);
+  const { user } = useAuth();
+  const { discountSettings } = useDiscount();
 
   useEffect(() => {
-    getAllProducts()
+    getAllPublishedProducts()
       .then((data) => {
         setProducts(data.products.undefined || data.products);
         setLoading(false);
@@ -102,7 +112,6 @@ export default function ProductPage() {
 
   const handleSearch = (event) => {
     setSearch(event.target.value);
-    console.log("searching for", event.target.value);
     getProductBySearch(event.target.value)
       .then((data) => {
         setProducts(data.products);
@@ -115,7 +124,7 @@ export default function ProductPage() {
   const handleCategoryChange = (event) => {
     setCategory(event.target.value);
     if (event.target.value === "all") {
-      getAllProducts().then((data) => {
+      getAllPublishedProducts().then((data) => {
         setProducts(data.products);
       });
     } else {
@@ -138,10 +147,10 @@ export default function ProductPage() {
 
     var hasdis = false;
 
-    if (baseTotal >= 200) {
+    if (baseTotal >= discountSettings.threshold) {
       hasdis = true;
       return {
-        baseTotal: (baseTotal * (1 - 0.2)).toFixed(2),
+        baseTotal: (baseTotal * (1 - discountSettings.rate)).toFixed(2),
         hasdis: hasdis,
       };
     } else {
@@ -161,7 +170,7 @@ export default function ProductPage() {
         sx={{ position: "fixed", top: 20, right: 20 }}
       >
         <Badge badgeContent={cartItems.length} color="secondary">
-          Cart
+          <ShoppingCartIcon />
         </Badge>
       </IconButton>
       <Drawer anchor="right" open={cartOpen} onClose={() => setCartOpen(false)}>
@@ -184,14 +193,14 @@ export default function ProductPage() {
                     size="small"
                     onClick={() => handleUpdateQuantity(item.id, -1)}
                   >
-                    <Typography>-</Typography>
+                    <RemoveIcon />
                   </IconButton>
                   <Typography>{item.quantity}</Typography>
                   <IconButton
                     size="small"
                     onClick={() => handleUpdateQuantity(item.id, 1)}
                   >
-                    <Typography>+</Typography>
+                    <AddIcon />
                   </IconButton>
                 </Box>
               }
